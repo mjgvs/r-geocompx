@@ -1,0 +1,71 @@
+---
+title: "selflearn-stplanr"
+author: "Maarten van Schaik"
+date: "2023-04-11"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r}
+library(stplanr)
+```
+
+# Which functions in the "stplanr" package are most important to learn first?
+
+The "stplanr" package is a very useful package in R for working with spatial data and transportation planning. Here are some of the most important functions in the "stplanr" package to learn first:
+
+1. `od2line()`: This function is used to convert origin-destination (OD) matrices into spatial lines, which can be plotted on a map.
+
+2. `route_graphhopper()`: This function is used to calculate the shortest path between two points using the GraphHopper routing engine.
+
+3. `od_to_odmatrix()`: This function is used to create an origin-destination (OD) matrix from spatial points.
+
+4. `nearest_link_oneway()`: This function is used to find the nearest one-way road link to a given point.
+
+5. `line2route()`: This function is used to convert spatial lines into a route, which can be used for routing analysis.
+
+6. `route_cyclestreet()`: This function is used to calculate a cycle route using OpenStreetMap data.
+
+7. `overline()`: This function is used to overlay two spatial lines and return the points where they intersect.
+
+8. `map_shape()`: This function is used to create a map of a given shapefile.
+
+These functions can be used for a wide range of spatial analysis tasks, including network analysis, routing analysis, and map creation.
+
+## od2line()
+
+Convert a sample OD data (provided by `stplanr::flow`) to spatial lines using `strplanr::od2line()`. The key variables in `flow` are the origin and destination ids, which link to the georeferenced spatial objects.
+
+Then, the `od2line()` function is used to convert the origin-destination (OD) matrix data in `od_data` into spatial lines. The `flow` argument specifies the OD matrix data, while the `zones` argument specifies the spatial points representing the zones. In this case, the `zones` argument is set to `cents_sf`, which presumably is a `sf` object containing the centroids of the zones.
+
+After converting the OD matrix data into spatial lines, the `plot()` function is used to plot the centroids of the zones (represented by `cents_sf`), and then the `l` object (which contains the spatial lines) is added to the plot using the `add = TRUE` argument. 
+
+The `lwd` argument in `plot()` is used to set the line width of the spatial lines based on the `All` column in the `l` object, which presumably contains data about the flow between the zones. Specifically, the line width is set to be proportional to the flow, with thicker lines indicating higher flows. The `mean(l$All)` part of this argument is used to normalize the line widths so that the average flow has a line width of 1.
+
+```{r stplanr-od2line}
+od_data <- stplanr::flow[1:20, ] 
+l <- od2line(flow = od_data, zones = cents_sf)
+plot(sf::st_geometry(cents_sf))
+plot(l, lwd = l$All / mean(l$All), add = TRUE)
+```
+
+## route_graphhopper()
+
+This function has been deprecated (https://docs.ropensci.org/stplanr/news/index.html#new-features-0-6-0) and may have been replaced with a standalone package: https://cran.r-project.org/web/packages/graphhopper/index.html
+
+## od_to_matrix()
+
+## nearest_link_oneway():
+
+```{r}
+r <- routes_fast_sf[2:6, NULL]
+p <- sf::st_sfc(sf::st_point(c(-1.540, 53.826)), crs = sf::st_crs(r))
+route_nearest_point(r, p, id_out = TRUE)
+r_nearest <- route_nearest_point(r, p)
+plot(r$geometry)
+plot(p, add = TRUE)
+plot(r_nearest, lwd = 5, add = TRUE)
+```
+

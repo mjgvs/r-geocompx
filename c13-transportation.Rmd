@@ -1,0 +1,40 @@
+---
+title: "c13-transportation"
+author: "Maarten van Schaik"
+date: "2023-04-11"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+library(sf)
+library(dplyr)
+# install.packages("spDataLarge", repos = "https://geocompr.r-universe.dev")
+library(spDataLarge)
+library(stplanr)      # for processing geographic transport data
+library(tmap)         # map making (see Chapter 9)
+library(ggplot2)      # data visualization package
+library(sfnetworks)   # spatial network classes and functions 
+```
+
+# Map of Bristol
+
+```{r 13-transport-2, echo=FALSE, eval=FALSE}
+# code that generated the input data - see also ?bristol_ways
+# source("https://github.com/geocompx/geocompr/raw/main/code/13-transport-data-gen.R") 
+# view input data
+# summary(bristol_ways)
+# summary(bristol_ttwa)
+# summary(bristol_region)
+region_all = rbind(bristol_region, bristol_ttwa)
+tmap_mode("view")
+tm_shape(region_all[1, ], bbox = region_all) +
+  tm_fill("yellow", alpha = 0.5) +
+  tm_shape(bristol_ways) +
+  tm_lines(col = "highway", lwd = 2.1, palette = "-Set1") +
+  tm_scale_bar() +
+  tm_shape(region_all) +
+  tm_borders(col = "black") +
+  tm_basemap(server = leaflet::providers$Esri.WorldTopoMap)
+```
